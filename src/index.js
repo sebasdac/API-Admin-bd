@@ -1,0 +1,20 @@
+import express from 'express';
+import cors from 'cors';
+import usuarioRoutes from './routes/usuario.routes.js';
+import prestamoRoutes  from './routes/prestamos.routes.js'
+
+const app = express();
+
+// Middlewares
+app.use(cors());
+app.use(express.json());
+
+// Rutas
+app.use('/api/usuarios', usuarioRoutes);
+app.use('/api/prestamos', prestamoRoutes)
+
+// Servidor en puerto 3001
+const PORT = 3001;
+app.listen(PORT, () => {
+    console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
+});
