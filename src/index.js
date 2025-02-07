@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import usuarioRoutes from './routes/usuario.routes.js';
 import prestamoRoutes  from './routes/prestamos.routes.js'
+import personasRoutes from './routes/personas.routes.js'
 
 const app = express();
 
@@ -12,6 +13,7 @@ app.use(express.json());
 // Rutas
 app.use('/api/usuarios', usuarioRoutes);
 app.use('/api/prestamos', prestamoRoutes)
+app.use('/api/personas', personasRoutes)
 
 // Servidor en puerto 3001
 const PORT = 3001;
