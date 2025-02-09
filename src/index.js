@@ -1,8 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import usuarioRoutes from './routes/usuario.routes.js';
-import prestamoRoutes  from './routes/prestamos.routes.js'
-import personasRoutes from './routes/personas.routes.js'
+import prestamoRoutes  from './routes/prestamos.routes.js';
+import personasRoutes from './routes/personas.routes.js';
+import solicitudesCrud from './routes/solicitudes.routes.js';
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use('/api/usuarios', usuarioRoutes);
 app.use('/api/prestamos', prestamoRoutes)
 app.use('/api/personas', personasRoutes)
+app.use('/api/solicitudes', solicitudesCrud)
 
 // Servidor en puerto 3001
 const PORT = 3001;

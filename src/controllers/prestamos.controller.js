@@ -26,7 +26,7 @@ export const Solicitud_CRUD = async (req, res) => {
     try {
         const pool = await getConnection();
 
-        const { id_solicitud, id_prestamo, id_persona, estado, operacion } = req.body;
+        const { id_solicitud, id_prestamo, id_persona, estado, operacion, monto } = req.body;
 
         // 🔹 Llamar al procedimiento almacenado con los parámetros
         const result = await pool.request()
@@ -35,6 +35,7 @@ export const Solicitud_CRUD = async (req, res) => {
             .input("ID_Persona", id_persona || null)
             .input("estado", estado || null)
             .input("operacion", operacion)
+            .input("monto", monto)
             .execute("SP_Solicitud");
 
         // 🔍 Si la operación es 2 (SELECT), devolver los datos

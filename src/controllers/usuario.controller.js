@@ -95,3 +95,64 @@ export const VerUsuariosySolicitantesPorCorreo = async (req, res) => {
     }
 };
 
+//#region "Crud"
+// ✅ Obtener todos los usuarios
+export const obtenerUsuario = async (req, res) => {
+    try {
+        const pool = await getConnection();
+        const result = await pool.request()
+            .input("operacion", sql.Int, 2) // 2 = SELECT
+            .execute("SP_Usuarios");
+
+        if (result.recordset.length > 0) {
+            return res.json({ success: true, usuarios: result.recordset });
+        } else {
+            return res.status(404).json({ success: false, message: "No hay usuarios disponibles" });
+        }
+    } catch (error) {
+        console.error("❌ Error al obtener usuarios:", error);
+        return res.status(500).json({ error: "Error al obtener usuarios" });
+    }
+};
+
+// ✅ Actualizar un usuario
+export const actualizarUsuario = async (req, res) => {
+    try {
+        const { id_usuario } = req.params;
+        const { email, tipo_usuario, ID_Persona } = req.body;
+        const pool = await getConnection();
+
+        await pool.request()
+            .input("operacion", sql.Int, 3) // 3 = UPDATE
+            .input("id_usuario", sql.Int, id_usuario)
+            .input("email", sql.VarChar(255), email)
+            .input("tipo_usuario", sql.VarChar(50), tipo_usuario)
+            .input("ID_Persona", sql.Int, ID_Persona)
+            .execute("SP_Usuarios");
+
+        res.json({ success: true, message: "✅ Usuario actualizado correctamente" });
+    } catch (error) {
+        console.error("❌ Error al actualizar usuario:", error);
+        res.status(500).json({ error: "Error al actualizar usuario" });
+    }
+};
+
+export const eliminarUsuario = async (req, res) => {
+    try {
+        const { id_usuario } = req.params;
+        const pool = await getConnection();
+
+        await pool.request()
+            .input("operacion", sql.Int, 4) // 4 = DELETE
+            .input("id_usuario", sql.Int, id_usuario)
+            .execute("SP_Usuarios");
+
+        res.json({ success: true, message: "✅ Usuario eliminado correctamente" });
+    } catch (error) {
+        console.error("❌ Error al eliminar usuario:", error);
+        res.status(500).json({ error: "Error al eliminar usuario" });
+    }
+};
+
+//#endregion
+
