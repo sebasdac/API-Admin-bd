@@ -104,3 +104,20 @@ export const RequisitoConPrestamo = async (req, res) => {
         return res.status(500).json({ error: "Error al insertar registro" });
     }
 };
+// ✅ Obtener todos los requisitos
+export const verRequisitoXPrestamo = async (req, res) => {
+    try {
+        const pool = await getConnection();
+        const result = await pool.request()
+            .execute("SP_VerRequisitosXPrestamo");
+
+        if (result.recordset.length > 0) {
+            return res.json({ success: true, requisitos: result.recordset });
+        } else {
+            return res.status(404).json({ success: false, message: "No hay requisitos disponibles" });
+        }
+    } catch (error) {
+        console.error("❌ Error al obtener requisitos:", error);
+        return res.status(500).json({ error: "Error al obtener requisitos" });
+    }
+};
