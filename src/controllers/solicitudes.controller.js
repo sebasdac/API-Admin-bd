@@ -122,3 +122,46 @@ export const Obtener_Solicitud = async (req, res) => {
         res.status(500).json({ error: "Error al obtener solicitudes" });
     }
 };
+
+export const requisitos = async (req, res) => {
+    try {
+        const { ID_Solicitud, ID_Requisito, Cumplido } = req.body;
+
+        // Convertir a 0 o 1 para SQL Server
+        const CumplidoBit = Cumplido ? 1 : 0;
+
+        const pool = await getConnection();
+        await pool.request()
+            .input("ID_Solicitud", sql.Int, ID_Solicitud)
+            .input("ID_Requisito", sql.Int, ID_Requisito)
+            .input("Cumplido", sql.Bit, CumplidoBit) // Se usa el valor convertido
+            .execute("SP_HistorialSolicitud");
+
+        res.json({ success: true, message: "✅ Actualizado" });
+    } catch (error) {
+        console.error("❌ Error al actualizar:", error);
+        res.status(500).json({ error: "Error al actualizar" });
+    }
+};
+
+export const actualizar_requisitos = async (req, res) => {
+    try {
+        const { ID_Solicitud, ID_Requisito, Cumplido } = req.body;
+
+        // Convertir a 0 o 1 para SQL Server
+        const CumplidoBit = Cumplido ? 1 : 0;
+
+        const pool = await getConnection();
+        await pool.request()
+            .input("ID_Solicitud", sql.Int, ID_Solicitud)
+            .input("ID_Requisito", sql.Int, ID_Requisito)
+            .input("Cumplido", sql.Bit, CumplidoBit) // Se usa el valor convertido
+            .execute("SP_ActualizarEstadoHistorial");
+
+        res.json({ success: true, message: "✅ Actualizado" });
+    } catch (error) {
+        console.error("❌ Error al actualizar:", error);
+        res.status(500).json({ error: "Error al actualizar" });
+    }
+};
+

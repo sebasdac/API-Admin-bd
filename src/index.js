@@ -7,6 +7,7 @@ import solicitudesCrud from './routes/solicitudes.routes.js';
 import verPagos from './routes/pagos.routes.js';
 import requisitosRoutes from './routes/requisitos.routes.js'
 import requisitosPrestamosRoutes from './routes/prestamos_requisitos.routes.js'
+import historialRoutes from './routes/historial.routes.js'
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use('/api/solicitudes', solicitudesCrud)
 app.use('/api/pagos', verPagos )
 app.use('/api/requisitos', requisitosRoutes)
 app.use('/api/prestamorequisitos', requisitosPrestamosRoutes)
+app.use('/api/historial', historialRoutes)
 
 
 
