@@ -1,11 +1,11 @@
 import sql from 'mssql'
 
 const dbSettings = {
-    user: "admin",
-    password:'admin123',
-    server: "sql-server2.cbay200iizkk.us-east-2.rds.amazonaws.com",
+    user: "user2",
+    password:'R82$8z8xo',
+    server: "tiusr20pl.cuc-carrera-ti.ac.cr",
     port: 1433,
-    database: "ProyectoBD_Sebas",
+    database: "tiusr20pl_admin_bd-_s",
     options: {
        encrypt: false,
        trustServerCertificate: true,

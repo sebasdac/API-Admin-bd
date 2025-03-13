@@ -159,4 +159,27 @@ export const Ver_Solicitudes = async (req, res) => {
         }
     };
 
+    export const CalcularMensualidad = async (req, res) => {
+        try {
+            const { id_solicitud } = req.params;
+            const pool = await getConnection();
+            console.log("Parámetro recibido:", id_solicitud);
+    
+            const result = await pool.request()
+                .input("id_solicitud", sql.Int, id_solicitud)
+                .execute("CalcularPagoMensual");
+    
+            console.log("Resultado de la consulta:", result);
+    
+            if (result.recordset.length > 0) {
+                return res.status(200).json({ success: true, message: result.recordset });
+            } else {
+                return res.status(404).json({ success: false, message: "No se encontró la solicitud" });
+            }
+        } catch (error) {
+            console.error("Error al consultar pago mensual:", error);
+            return res.status(500).json({ error: "Error al consultar pago mensual" });
+        }
+    };
+    
     //#endregion
