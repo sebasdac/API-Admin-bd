@@ -9,6 +9,8 @@ import requisitosRoutes from './routes/requisitos.routes.js'
 import requisitosPrestamosRoutes from './routes/prestamos_requisitos.routes.js'
 import historialRoutes from './routes/historial.routes.js'
 import mensajesRoutes from './routes/mensajes.routes.js'
+import calculomensual from  './routes/calculomensual.routes.js'
+import tablaamortizacion from  './routes/tablaamortizacion.routes.js'
 
 const app = express();
 
@@ -26,6 +28,8 @@ app.use('/api/requisitos', requisitosRoutes)
 app.use('/api/prestamorequisitos', requisitosPrestamosRoutes)
 app.use('/api/historial', historialRoutes)
 app.use('/api/mensajes', mensajesRoutes)
+app.use('/api/calculomensualidad', calculomensual)
+app.use("/api/tablaamortizacion", tablaamortizacion)
 
 
 

@@ -92,7 +92,7 @@ export const Realizar_Pago = async (req, res) => {
         const pool = await getConnection();
 
         await pool.request()
-            .input("monto_pagado", sql.BigInt, monto)
+            .input("monto_pagado", sql.Decimal, monto)
             .input("ID_Solicitud", sql.Int, ID_Solicitud)
             .execute("sp_RealizarPago");
 
