@@ -4,7 +4,7 @@ import sql from 'mssql';
 // Agregar usuario llamando al procedimiento almacenado
 export const agregarUsuario = async (req, res) => {
     try {
-        const { tipo_usuario, cedula, nombre, email, telefono, direccion, cargo, contraseña } = req.body;
+        const { tipo_usuario, cedula, nombre, email, telefono, direccion, cargo, contraseña, fecha_nacimiento} = req.body;
         
         const pool = await getConnection();
         const result = await pool.request()
@@ -16,6 +16,7 @@ export const agregarUsuario = async (req, res) => {
             .input('direccion', sql.VarChar(255), direccion || null)
             .input('cargo', sql.VarChar(50), cargo || null)
             .input('contraseña', sql.VarChar(255), contraseña)
+            .input('fecha_nacimiento', sql.Date, fecha_nacimiento || null)
             .execute('AgregarUsuarioYPersona');
 
         res.status(201).json({ message: 'Usuario agregado exitosamente', result });
