@@ -11,12 +11,14 @@ import historialRoutes from './routes/historial.routes.js'
 import mensajesRoutes from './routes/mensajes.routes.js'
 import calculomensual from  './routes/calculomensual.routes.js'
 import tablaamortizacion from  './routes/tablaamortizacion.routes.js'
+import { dbMiddleware } from '../middleware/dbMiddleware.js';
 
 const app = express();
 
 // Middlewares
 app.use(cors());
 app.use(express.json());
+app.use(dbMiddleware);
 
 // Rutas
 app.use('/api/usuarios', usuarioRoutes);

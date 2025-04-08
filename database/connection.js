@@ -1,28 +1,46 @@
-import sql from 'mssql'
+// connection.js
+import sql from 'mssql';
 
-const dbSettings = {
-    user: "user2",
-    password:'R82$8z8xo',
-    server: "tiusr20pl.cuc-carrera-ti.ac.cr",
-    port: 1433,
-    database: "tiusr20pl_admin_bd-_s",
-    options: {
-       encrypt: false,
-       trustServerCertificate: true,
-    }
+const primaryDbConfig = {
+  user: "User",
+  password: "Hairwax1",
+  server: "localhost",
+  port: 1434,
+  database: "ProyectoBD_Sebas",
+  options: {
+    encrypt: false,
+    trustServerCertificate: true,
+  }
 };
 
-export const getConnection =  async () => {
-   try {
-     const pool = await sql.connect(dbSettings);
-     console.log("Conexion exitosa");
+const replicaDbConfig = {
+  user: "sa",
+  password: "Hairwax1",
+  server: "localhost", // ⚠️ CAMBIAR por el servidor de réplica
+  port: 1435,
+  database: "Proyecto_Admin_Replica",
+  options: {
+    encrypt: false,
+    trustServerCertificate: true,
+  }
+};
 
-     const result = await pool.request().query("select GETDATE()");
-     console.log(result);
-     return pool
-   } 
-
-   catch (error){
-     console.log(error);
-   }
-}
+export const connectToDatabase = async () => {
+  try {
+    const pool = await sql.connect(primaryDbConfig);
+    await pool.request().query("SELECT 1");
+    console.log("✅ Conectado a la base PRINCIPAL");
+    return { pool, connectedTo: "principal" };
+  } catch (error) {
+    console.warn("⚠️ Falló conexión con la base principal:", error.message);
+    try {
+      const replicaPool = await sql.connect(replicaDbConfig);
+      await replicaPool.request().query("SELECT 1");
+      console.log("✅ Conectado a la base RÉPLICA");
+      return { pool: replicaPool, connectedTo: "replica" };
+    } catch (replicaError) {
+      console.error("❌ Falló conexión con ambas bases:", replicaError.message);
+      throw new Error("No se pudo conectar a ninguna base de datos");
+    }
+  }
+};
