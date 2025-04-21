@@ -120,8 +120,10 @@ export const obtenerUsuario = async (req, res) => {
 export const actualizarUsuario = async (req, res) => {
     try {
         const { id_usuario } = req.params;
-        const { email, tipo_usuario, ID_Persona } = req.body;
+        const { email, tipo_usuario, ID_Persona, TimeStampHex} = req.body;
         const pool = await getConnection();
+
+        const buffer = Buffer.from(TimeStampHex.replace('0x', ''), 'hex');
 
         await pool.request()
             .input("operacion", sql.Int, 3) // 3 = UPDATE
@@ -129,12 +131,17 @@ export const actualizarUsuario = async (req, res) => {
             .input("email", sql.VarChar(255), email)
             .input("tipo_usuario", sql.VarChar(50), tipo_usuario)
             .input("ID_Persona", sql.Int, ID_Persona)
+            .input("TimeStamp", sql.Binary, buffer)
             .execute("SP_Usuarios");
 
         res.json({ success: true, message: "✅ Usuario actualizado correctamente" });
     } catch (error) {
-        console.error("❌ Error al actualizar usuario:", error);
-        res.status(500).json({ error: "Error al actualizar usuario" });
+        if (error.message.includes("Error: El usuario ya fue modificado por otro usuario.")) {
+            res.status(409).json({ error: "Este usuario fue actualizado por otro usuario. Por favor, intente nuevamente." });
+        } else {
+            console.error("❌ Error al actualizar usuario:", error);
+            res.status(500).json({ error: "Error al actualizar usuario" });
+        }
     }
 };
 

@@ -43,17 +43,19 @@ export const insertarRequisito = async (req, res) => {
 
 // ✅ Actualizar un requisito
 export const actualizarRequisito = async (req, res) => {
-    const { id_requisito, descripcion } = req.body;
+    const { id_requisito, descripcion, TimeStamp} = req.body;
     if (!id_requisito || !descripcion) {
         return res.status(400).json({ error: "ID y descripción son obligatorios" });
     }
-
+ 
     try {
         const pool = await getConnection();
+        const buffer = Buffer.from(TimeStamp.replace('0x', ''), 'hex');// estampilla
         await pool.request()
             .input("Accion", sql.VarChar, "UPDATE")
             .input("id_requisito", sql.Int, id_requisito)
             .input("descripcion", sql.VarChar, descripcion)
+            .input("TimeStamp", sql.Binary, buffer)
             .execute("SP_CRUD_Requisitos");
 
         return res.json({ success: true, message: "Requisito actualizado correctamente" });

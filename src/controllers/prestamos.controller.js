@@ -121,8 +121,10 @@ export const Ver_Solicitudes = async (req, res) => {
     export const Actualizar_Prestamo = async (req, res) => {
         try {
             const { id_prestamo } = req.params;
-            const { nombre, plazo_meses, interes, tipo_interes, porcentaje } = req.body;
+            const { nombre, plazo_meses, interes, tipo_interes, porcentaje, TimeStampHex} = req.body;
             const pool = await getConnection();
+
+            const buffer = Buffer.from(TimeStampHex.replace('0x', ''), 'hex');// estampilla
     
             await pool.request()
                 .input("Operacion", sql.NVarChar, "UPDATE")
@@ -132,12 +134,17 @@ export const Ver_Solicitudes = async (req, res) => {
                 .input("interes", sql.Decimal(10,2), interes)
                 .input("tipo_interes", sql.NVarChar, tipo_interes)
                 .input("porcentaje", sql.Decimal(5,2), porcentaje)
+                .input("TimeStamp", sql.Binary, buffer)
                 .execute("sp_CrudPrestamos");
     
             res.json({ success: true, message: "✅ Préstamo actualizado correctamente" });
         } catch (error) {
+            if (error.message.includes("El préstamo ya fue modificado por otro usuario")) {
+                res.status(409).json({ error: "Este préstamo fue actualizado por otro usuario. Por favor, intente nuevamente." });
+            } else {
             console.error("❌ Error al actualizar préstamo:", error);
             res.status(500).json({ error: "Error al actualizar préstamo" });
+            }
         }
     };
     
