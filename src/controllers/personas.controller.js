@@ -1,4 +1,4 @@
-import { getConnection } from '../../database/connection.js';
+import { getConnectionByRole } from '../../database/connection.js';
 import sql from "mssql";
 
 // 🔹 INSERTAR UNA PERSONA
@@ -10,7 +10,8 @@ export const insertarPersona = async (req, res) => {
             return res.status(400).json({ success: false, message: "Todos los campos son obligatorios" });
         }
 
-        const pool = await getConnection();
+             const rol = req.headers['x-user-role'] || 'generico';
+const pool = await getConnectionByRole(rol);
         await pool.request()
             .input("Cedula", sql.VarChar(20), cedula)
             .input("Nombre", sql.VarChar(100), nombre)
@@ -38,7 +39,8 @@ export const obtenerPersonaPorID = async (req, res) => {
             return res.status(400).json({ success: false, message: "El ID debe ser un número válido" });
         }
 
-        const pool = await getConnection();
+             const rol = req.headers['x-user-role'] || 'generico';
+const pool = await getConnectionByRole(rol);
         const result = await pool.request()
             .input("ID_Persona", sql.Int, id)
             .input("Operacion", sql.Int, 2) // 2 = SELECT
@@ -66,7 +68,8 @@ export const actualizarPersona = async (req, res) => {
             return res.status(400).json({ success: false, message: "El ID debe ser un número válido" });
         }
 
-        const pool = await getConnection();
+             const rol = req.headers['x-user-role'] || 'generico';
+const pool = await getConnectionByRole(rol);
         await pool.request()
             .input("ID_Persona", sql.Int, id)
             .input("Cedula", sql.VarChar(20), cedula || null)
@@ -95,7 +98,8 @@ export const eliminarPersona = async (req, res) => {
             return res.status(400).json({ success: false, message: "El ID debe ser un número válido" });
         }
 
-        const pool = await getConnection();
+             const rol = req.headers['x-user-role'] || 'generico';
+const pool = await getConnectionByRole(rol);
         await pool.request()
             .input("ID_Persona", sql.Int, id)
             .input("Operacion", sql.Int, 4) // 4 = DELETE
@@ -118,7 +122,8 @@ export const actualizarPersonaSoloDatos = async (req, res) => {
             return res.status(400).json({ success: false, message: "El ID debe ser un número válido" });
         }
 
-        const pool = await getConnection();
+             const rol = req.headers['x-user-role'] || 'generico';
+const pool = await getConnectionByRole(rol);
         await pool.request()
             .input("ID_Persona", sql.Int, id_persona)    
             .input("Nombre", sql.VarChar(100), nombre || null)

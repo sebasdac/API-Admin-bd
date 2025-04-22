@@ -1,9 +1,11 @@
-import { getConnection } from '../../database/connection.js';
+import { getConnectionByRole } from '../../database/connection.js';
+
 
 
 export const CalcularMensualidad = async (req, res) => {
     try {
-        const pool = await getConnection();
+             const rol = req.headers['x-user-role'] || 'generico';
+const pool = await getConnectionByRole(rol);
         await pool.request().execute("GenerarCuotasMensuales")
         const result = await pool.request().execute('SP_VerCuotasPendientes'); // Corrección aquí
 

@@ -1,10 +1,11 @@
-import { getConnection } from '../../database/connection.js';
+import { getConnectionByRole } from '../../database/connection.js';
 import sql from "mssql";
 
 // ✅ Obtener todas las solicitudes
 export const obtenerSolicitudes = async (req, res) => {
     try {
-        const pool = await getConnection();
+             const rol = req.headers['x-user-role'] || 'generico';
+     const pool = await getConnectionByRole(rol);
         const result = await pool.request()
             .input("operacion", sql.Int, 2) // 2 = SELECT
             .execute("SP_Solicitud");
@@ -24,7 +25,8 @@ export const obtenerSolicitudes = async (req, res) => {
 export const crearSolicitud = async (req, res) => {
     try {
         const { id_prestamo, id_persona, estado } = req.body;
-        const pool = await getConnection();
+             const rol = req.headers['x-user-role'] || 'generico';
+     const pool = await getConnectionByRole(rol);
 
         await pool.request()
             .input("operacion", sql.Int, 1) // 1 = INSERT
@@ -48,7 +50,8 @@ export const actualizarSolicitud = async (req, res) => {
 
         console.log("📌 Datos recibidos en la API:", { id_solicitud });
 
-        const pool = await getConnection();
+             const rol = req.headers['x-user-role'] || 'generico';
+     const pool = await getConnectionByRole(rol);
         const result = await pool.request()
             
             .input("ID_Solicitud", sql.Int, parseInt(id_solicitud, 10))
@@ -72,7 +75,8 @@ export const actualizarSolicitud = async (req, res) => {
 export const eliminarSolicitud = async (req, res) => {
     try {
         const { id_solicitud } = req.params;
-        const pool = await getConnection();
+             const rol = req.headers['x-user-role'] || 'generico';
+     const pool = await getConnectionByRole(rol);
 
         await pool.request()
             .input("operacion", sql.Int, 4) // 4 = DELETE
@@ -89,7 +93,8 @@ export const eliminarSolicitud = async (req, res) => {
 export const Realizar_Pago = async (req, res) => {
     try {
         const { monto, ID_Solicitud } = req.body;
-        const pool = await getConnection();
+             const rol = req.headers['x-user-role'] || 'generico';
+     const pool = await getConnectionByRole(rol);
 
         await pool.request()
             .input("monto_pagado", sql.Decimal, monto)
@@ -107,7 +112,8 @@ export const Obtener_Solicitud = async (req, res) => {
     try {
         const { id_persona } = req.params;
 
-        const pool = await getConnection();
+             const rol = req.headers['x-user-role'] || 'generico';
+     const pool = await getConnectionByRole(rol);
         const result = await pool.request()
             .input("operacion", sql.Int, 5)
             .input("ID_Persona", sql.Int, id_persona)
@@ -130,7 +136,8 @@ export const requisitos = async (req, res) => {
         // Convertir a 0 o 1 para SQL Server
         const CumplidoBit = Cumplido ? 1 : 0;
 
-        const pool = await getConnection();
+             const rol = req.headers['x-user-role'] || 'generico';
+     const pool = await getConnectionByRole(rol);
         await pool.request()
             .input("ID_Solicitud", sql.Int, ID_Solicitud)
             .input("ID_Requisito", sql.Int, ID_Requisito)
@@ -151,7 +158,8 @@ export const actualizar_requisitos = async (req, res) => {
         // Convertir a 0 o 1 para SQL Server
         const CumplidoBit = Cumplido ? 1 : 0;
 
-        const pool = await getConnection();
+             const rol = req.headers['x-user-role'] || 'generico';
+     const pool = await getConnectionByRole(rol);
         await pool.request()
             .input("ID_Solicitud", sql.Int, ID_Solicitud)
             .input("ID_Requisito", sql.Int, ID_Requisito)

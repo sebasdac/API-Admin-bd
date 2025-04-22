@@ -1,28 +1,61 @@
-import sql from 'mssql'
+import sql from 'mssql';
 
-const dbSettings = {
-    user: "user2",
-    password:'R82$8z8xo',
-    server: "tiusr20pl.cuc-carrera-ti.ac.cr",
+const dbConfig = {
+  generico: {
+    user: 'generico1',
+    password: 'generico123',
+    server: 'localhost',
+    database: 'ProyectoAdminBD',
     port: 1433,
-    database: "tiusr20pl_admin_bd-_s",
     options: {
-       encrypt: false,
-       trustServerCertificate: true,
+      encrypt: false,
+      trustServerCertificate: true
     }
+  },
+  funcionario: {
+    user: 'USER',
+    port: 1433,
+    password: 'user123',
+    server: 'localhost',
+    database: 'ProyectoAdminBD',
+    options: {
+      encrypt: false,
+      trustServerCertificate: true
+    }
+  },
+  solicitante: {
+    user: 'solicitante',
+    port: 1433,
+    password: 'solicitante123',
+    server: 'localhost',
+    database: 'ProyectoAdminBD',
+    options: {
+      encrypt: false,
+      trustServerCertificate: true
+    }
+  },
+  cliente: {
+    user: 'cliente',
+    port: 1433,
+    password: 'cliente123',
+    server: 'localhost',
+    database: 'ProyectoAdminBD',
+    options: {
+      encrypt: false,
+      trustServerCertificate: true
+    }
+  }
 };
 
-export const getConnection =  async () => {
-   try {
-     const pool = await sql.connect(dbSettings);
-     console.log("Conexion exitosa");
 
-     const result = await pool.request().query("select GETDATE()");
-     console.log(result);
-     return pool
-   } 
 
-   catch (error){
-     console.log(error);
-   }
+export async function getConnectionByRole(rol) {
+  const config = dbConfig[rol];
+  if (!config) throw new Error('Rol no válido');
+
+  // Cierra todas las conexiones anteriores antes de abrir una nueva
+  await sql.close().catch(() => {});
+  const pool = await sql.connect(config);
+  return pool;
 }
+

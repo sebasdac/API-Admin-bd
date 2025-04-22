@@ -1,5 +1,5 @@
 
-import { getConnection } from '../../database/connection.js';
+import { getConnectionByRole } from '../../database/connection.js';
 import sql from "mssql";
 
 export const insertarMensaje = async (req, res) => {
@@ -10,7 +10,8 @@ export const insertarMensaje = async (req, res) => {
             return res.status(400).json({ success: false, message: "Todos los campos son obligatorios" });
         }
 
-        const pool = await getConnection();
+             const rol = req.headers['x-user-role'] || 'generico';
+const pool = await getConnectionByRole(rol);
         await pool.request()
             .input("nombre", sql.VarChar(20), nombre)
             .input("email", sql.VarChar(100), email)
@@ -27,7 +28,8 @@ export const insertarMensaje = async (req, res) => {
 
 export const obtenerMensajes = async (req, res) => {
     try {
-        const pool = await getConnection();
+             const rol = req.headers['x-user-role'] || 'generico';
+const pool = await getConnectionByRole(rol);
         const result = await pool.request() 
             .execute("sp_ObtenerMensajes");
 

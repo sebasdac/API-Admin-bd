@@ -1,10 +1,11 @@
-import { getConnection } from '../../database/connection.js';
+import { getConnectionByRole } from '../../database/connection.js';
 import sql from "mssql";
 
 // ✅ Obtener todos los requisitos
 export const obtenerRequisitos = async (req, res) => {
     try {
-        const pool = await getConnection();
+             const rol = req.headers['x-user-role'];
+     const pool = await getConnectionByRole(rol);
         const result = await pool.request()
             .input("Accion", sql.VarChar, "SELECT")
             .execute("SP_CRUD_Requisitos");
@@ -28,7 +29,8 @@ export const insertarRequisito = async (req, res) => {
     }
 
     try {
-        const pool = await getConnection();
+             const rol = req.headers['x-user-role'] || 'generico';
+     const pool = await getConnectionByRole(rol);
         await pool.request()
             .input("Accion", sql.VarChar, "INSERT")
             .input("descripcion", sql.VarChar, descripcion)
@@ -49,7 +51,8 @@ export const actualizarRequisito = async (req, res) => {
     }
  
     try {
-        const pool = await getConnection();
+             const rol = req.headers['x-user-role'] || 'generico';
+     const pool = await getConnectionByRole(rol);
         const buffer = Buffer.from(TimeStamp.replace('0x', ''), 'hex');// estampilla
         await pool.request()
             .input("Accion", sql.VarChar, "UPDATE")
@@ -73,7 +76,8 @@ export const eliminarRequisito = async (req, res) => {
     }
 
     try {
-        const pool = await getConnection();
+             const rol = req.headers['x-user-role'] || 'generico';
+     const pool = await getConnectionByRole(rol);
         await pool.request()
             .input("Accion", sql.VarChar, "DELETE")
             .input("id_requisito", sql.Int, id_requisito)
@@ -93,7 +97,8 @@ export const RequisitoConPrestamo = async (req, res) => {
         return res.status(400).json({ error: "ID y descripción son obligatorios" });
     }
     try {
-        const pool = await getConnection();
+             const rol = req.headers['x-user-role'] || 'generico';
+     const pool = await getConnectionByRole(rol);
         await pool.request()
             .input("Descripcion", sql.VarChar, descripcion)
             .input("Obligatorio", sql.VarChar, obligatorio)
@@ -109,7 +114,9 @@ export const RequisitoConPrestamo = async (req, res) => {
 // ✅ Obtener todos los requisitos
 export const verRequisitoXPrestamo = async (req, res) => {
     try {
-        const pool = await getConnection();
+        const rol = req.headers['x-user-role'];
+        const pool = await getConnectionByRole(rol);
+        console.log(req.headers);
         const result = await pool.request()
             .execute("SP_VerRequisitosXPrestamo");
 

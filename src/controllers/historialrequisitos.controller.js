@@ -1,9 +1,10 @@
-import { getConnection } from '../../database/connection.js';
+import { getConnectionByRole } from '../../database/connection.js';
 import sql from "mssql";
 
 export const Ver_HistorialRequisitos = async (req, res) => {
     try {
-        const pool = await getConnection();
+             const rol = req.headers['x-user-role'] || 'generico';
+const pool = await getConnectionByRole(rol);
         const result = await pool.request().execute('SP_VerTodosHistorialRequisitos'); // Corrección aquí
 
         // Verificamos si hay resultados

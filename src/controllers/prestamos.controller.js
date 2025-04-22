@@ -1,11 +1,15 @@
-import { getConnection } from '../../database/connection.js';
+import { getConnectionByRole } from '../../database/connection.js';
 import sql from 'mssql';
 
 
 
 export const Ver_Prestamos = async (req, res) => {
     try {
-        const pool = await getConnection();
+        
+             const rol = req.headers['x-user-role'];
+             console.log(req.headers);
+             console.log(rol)
+            const pool = await getConnectionByRole(rol);
         const result = await pool.request().execute('Ver_Prestamos'); // Corrección aquí
 
         // Verificamos si hay resultados
@@ -24,7 +28,10 @@ export const Ver_Prestamos = async (req, res) => {
 // 🔥 Función para manejar todas las operaciones del SP_Solicitud
 export const Solicitud_CRUD = async (req, res) => {
     try {
-        const pool = await getConnection();
+             const rol = req.headers['x-user-role'];
+             console.log(req.headers)
+             
+const pool = await getConnectionByRole(rol);
 
         const { id_solicitud, id_prestamo, id_persona, estado, operacion, monto } = req.body;
 
@@ -53,7 +60,8 @@ export const Solicitud_CRUD = async (req, res) => {
 
 export const Ver_Solicitudes = async (req, res) => {
     try {
-        const pool = await getConnection();
+             const rol = req.headers['x-user-role'];
+const pool = await getConnectionByRole(rol);
 
         let { ID_Cliente } = req.params;  // 🔹 Capturar ID de params
 
@@ -81,7 +89,8 @@ export const Ver_Solicitudes = async (req, res) => {
     //#region  "Crud"
     export const Ver = async (req, res) => {
         try {
-            const pool = await getConnection();
+                 const rol = req.headers['x-user-role'] || 'generico';
+const pool = await getConnectionByRole(rol);
             const result = await pool.request().execute("sp_CrudPrestamos", { Operacion: "SELECT" });
     
             if (result.recordset.length > 0) {
@@ -99,7 +108,8 @@ export const Ver_Solicitudes = async (req, res) => {
     export const Insertar_Prestamo = async (req, res) => {
         try {
             const { nombre, plazo_meses, interes, tipo_interes, porcentaje } = req.body;
-            const pool = await getConnection();
+                 const rol = req.headers['x-user-role'] || 'generico';
+const pool = await getConnectionByRole(rol);
     
             await pool.request()
                 .input("Operacion", sql.NVarChar, "INSERT")
@@ -122,7 +132,8 @@ export const Ver_Solicitudes = async (req, res) => {
         try {
             const { id_prestamo } = req.params;
             const { nombre, plazo_meses, interes, tipo_interes, porcentaje, TimeStampHex} = req.body;
-            const pool = await getConnection();
+                 const rol = req.headers['x-user-role'] || 'generico';
+const pool = await getConnectionByRole(rol);
 
             const buffer = Buffer.from(TimeStampHex.replace('0x', ''), 'hex');// estampilla
     
@@ -152,7 +163,8 @@ export const Ver_Solicitudes = async (req, res) => {
     export const Eliminar_Prestamo = async (req, res) => {
         try {
             const { id_prestamo } = req.params;
-            const pool = await getConnection();
+                 const rol = req.headers['x-user-role'] || 'generico';
+const pool = await getConnectionByRole(rol);
     
             await pool.request()
                 .input("Operacion", sql.NVarChar, "DELETE")
@@ -169,7 +181,8 @@ export const Ver_Solicitudes = async (req, res) => {
     export const CalcularMensualidad = async (req, res) => {
         try {
             const { id_solicitud } = req.params;
-            const pool = await getConnection();
+                 const rol = req.headers['x-user-role'] || 'generico';
+const pool = await getConnectionByRole(rol);
             console.log("Parámetro recibido:", id_solicitud);
     
             const result = await pool.request()

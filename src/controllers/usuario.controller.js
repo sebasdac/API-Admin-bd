@@ -1,4 +1,5 @@
-import { getConnection } from '../../database/connection.js';
+import { getConnectionByRole } from '../../database/connection.js';
+
 import sql from 'mssql';
 
 // Agregar usuario llamando al procedimiento almacenado
@@ -6,7 +7,8 @@ export const agregarUsuario = async (req, res) => {
     try {
         const { tipo_usuario, cedula, nombre, email, telefono, direccion, cargo, contraseña, fecha_nacimiento} = req.body;
         
-        const pool = await getConnection();
+             const rol = req.headers['x-user-role'] || 'generico';
+     const pool = await getConnectionByRole(rol);
         const result = await pool.request()
             .input('tipo_usuario', sql.VarChar(20), tipo_usuario)
             .input('cedula', sql.VarChar(20), cedula)
@@ -29,7 +31,8 @@ export const agregarUsuario = async (req, res) => {
 // Obtener todos los usuarios (ejemplo)
 export const obtenerUsuarios = async (req, res) => {
     try {
-        const pool = await getConnection();
+             const rol = req.headers['x-user-role'] || 'generico';
+     const pool = await getConnectionByRole(rol);
         const result = await pool.request().query('SELECT * FROM Usuarios');
         res.json(result.recordset);
     } catch (error) {
@@ -44,7 +47,8 @@ export const IniciarSesion = async (req, res) => {
     const { correo, contrasena } = req.body;
 
     try {
-        const pool = await getConnection();
+             const rol = req.headers['x-user-role'] || 'generico';
+     const pool = await getConnectionByRole(rol);
         const result = await pool
             .request()
             .input("correo", correo)
@@ -79,7 +83,8 @@ export const VerUsuariosySolicitantesPorCorreo = async (req, res) => {
             return res.status(400).json({ success: false, message: "El correo es obligatorio" });
         }
 
-        const pool = await getConnection();
+             const rol = req.headers['x-user-role'] || 'generico';
+     const pool = await getConnectionByRole(rol);
         const result = await pool.request()
             .input('correo', correo) // Pasar el parámetro al SP
             .execute('VerUsuariosySolicitantesPorCorreo'); // Ejecutar el procedimiento
@@ -100,7 +105,8 @@ export const VerUsuariosySolicitantesPorCorreo = async (req, res) => {
 // ✅ Obtener todos los usuarios
 export const obtenerUsuario = async (req, res) => {
     try {
-        const pool = await getConnection();
+             const rol = req.headers['x-user-role'] || 'generico';
+     const pool = await getConnectionByRole(rol);
         const result = await pool.request()
             .input("operacion", sql.Int, 2) // 2 = SELECT
             .execute("SP_Usuarios");
@@ -121,7 +127,8 @@ export const actualizarUsuario = async (req, res) => {
     try {
         const { id_usuario } = req.params;
         const { email, tipo_usuario, ID_Persona, TimeStampHex} = req.body;
-        const pool = await getConnection();
+             const rol = req.headers['x-user-role'] || 'generico';
+     const pool = await getConnectionByRole(rol);
 
         const buffer = Buffer.from(TimeStampHex.replace('0x', ''), 'hex');
 
@@ -148,7 +155,8 @@ export const actualizarUsuario = async (req, res) => {
 export const eliminarUsuario = async (req, res) => {
     try {
         const { id_usuario } = req.params;
-        const pool = await getConnection();
+             const rol = req.headers['x-user-role'] || 'generico';
+     const pool = await getConnectionByRole(rol);
 
         await pool.request()
             .input("operacion", sql.Int, 4) // 4 = DELETE

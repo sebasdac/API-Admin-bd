@@ -1,9 +1,10 @@
-import { getConnection } from '../../database/connection.js';
+import { getConnectionByRole } from '../../database/connection.js';
 
 // ✅ Obtener todos los Prestamo_Requisitos
 export const obtenerPrestamoRequisitos = async (req, res) => {
     try {
-        const pool = await getConnection();
+             const rol = req.headers['x-user-role'] || 'generico';
+const pool = await getConnectionByRole(rol);
         const result = await pool.request()
             .input("Accion", sql.VarChar, "SELECT")
             .execute("SP_CRUD_PrestamoRequisitos");
@@ -27,7 +28,8 @@ export const insertarPrestamoRequisito = async (req, res) => {
     }
 
     try {
-        const pool = await getConnection();
+             const rol = req.headers['x-user-role'] || 'generico';
+const pool = await getConnectionByRole(rol);
         await pool.request()
             .input("Accion", sql.VarChar, "INSERT")
             .input("id_prestamo", sql.Int, id_prestamo)
@@ -50,7 +52,8 @@ export const eliminarPrestamoRequisito = async (req, res) => {
     }
 
     try {
-        const pool = await getConnection();
+             const rol = req.headers['x-user-role'] || 'generico';
+const pool = await getConnectionByRole(rol);
         await pool.request()
             .input("Accion", sql.VarChar, "DELETE")
             .input("id_prestamo", sql.Int, id_prestamo)

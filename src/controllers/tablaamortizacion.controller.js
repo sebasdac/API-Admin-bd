@@ -1,10 +1,11 @@
-import { getConnection } from '../../database/connection.js';
+import { getConnectionByRole } from '../../database/connection.js';
 import sql from "mssql";
 
 export const VerTablaAmortizacion = async (req, res) => {
     try {
         const {id_solicitud} = req.params
-        const pool = await getConnection(); 
+             const rol = req.headers['x-user-role'] || 'generico';
+     const pool = await getConnectionByRole(rol); 
         const result = await pool.request()
          .input('id_solicitud', sql.Int, id_solicitud)
          .execute("sp_ObtenerHistorialPagos")

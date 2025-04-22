@@ -1,4 +1,4 @@
-import { getConnection } from '../../database/connection.js';
+import { getConnectionByRole } from '../../database/connection.js';
 import sql from "mssql";
 
 export const obtenerPagoPorID = async (req, res) => {
@@ -9,7 +9,8 @@ export const obtenerPagoPorID = async (req, res) => {
             return res.status(400).json({ success: false, message: "El ID debe ser un número válido" });
         }
 
-        const pool = await getConnection();
+             const rol = req.headers['x-user-role'] || 'generico';
+const pool = await getConnectionByRole(rol);
         const result = await pool.request()
             .input("ID_Persona", sql.Int, id_persona)
             .execute("sp_verPagos");
